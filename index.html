@@ -648,7 +648,7 @@ function desk(){
     wh.rotation.z=Math.PI/2; wh.rotation.y=-a-Math.PI/2;
     wh.position.set(Math.sin(a)*.245,.027,Math.cos(a)*.245); ch.add(wh); }
   ch.traverse(o=>{if(o.isMesh)o.castShadow=true;});
-  ch.position.set(2.5,0,2.62); ch.rotation.y=Math.PI+.12; scene.add(ch); tag(ch,'CHAIR');
+  ch.position.set(2.5,0,2.62); ch.rotation.y=0; scene.add(ch); tag(ch,'CHAIR');
 }
 function brass(){return mkMat('#b08d3e',{metalness:.9,roughness:.32});}
 
