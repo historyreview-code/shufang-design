@@ -79,7 +79,7 @@
   <h1>临窗书房</h1>
   <div class="sub">软装方案效果图 &nbsp;·&nbsp; <b>5.0m × 6.0m</b>　层高 2.8m<br>朝南凸窗采光 &nbsp;·&nbsp; 西墙整面书架 &nbsp;·&nbsp; 临窗书桌</div>
   <div class="tagrow">
-    <span class="tag">复古暖木</span><span class="tag">阅读坐榻</span><span class="tag">图书馆梯</span><span class="tag">治愈系</span>
+    <span class="tag">复古暖木</span><span class="tag">阅读坐榻</span><span class="tag">整墙藏书</span><span class="tag">治愈系</span>
   </div>
 </div>
 
@@ -278,8 +278,7 @@ const INFO={
  DESK:{name:'书桌',spec:'实木厚板 1.8×0.85×0.75m，两端抽屉柜腿',mat:'胡桃褐实木 · 黄铜圆拉手',price:'¥3,000–6,000',tip:'面窗而坐，桌面中心距南窗约1.7m——上午侧光不刺屏'},
  BANKER:{name:'银行家台灯',spec:'绿玻璃罩 × 黄铜底座',mat:'祖母绿金属罩 · 2700K 暖光泡',price:'¥300–800',tip:'书房灵魂件，夜晚只亮这一盏刚好'},
  CHAIR:{name:'工作转椅',spec:'坐高47cm，五星脚带轮',mat:'干邑色真皮',price:'¥1,500–3,000',tip:'椅背到桌沿留 30cm 余量起身后不碰柜'},
- SHELF:{name:'整墙书架',spec:'定制 5.4m 长×2.72m 通高×0.35m 深；底柜38cm 带门，上部 8 格×6 层',mat:'橡木 / 黑胡桃；英伦方案可换墨绿背板',price:'¥12,000–22,000',tip:'约24延米层板 ≈ 600–700 册藏书，留两格给摆件'},
- LADDER:{name:'图书馆梯',spec:'斜靠直梯 H2.3m · 7 级踏步',mat:'与书架同木色 · 顶部防滑套',price:'多随定制书架附赠',tip:'搬动时提离轨道即可换位取书'},
+ SHELF:{name:'整墙书架',spec:'定制 5.4m 长×2.72m 通高×0.35m 深；底柜38cm 带门，上部 8 格×6 层',mat:'橡木 / 黑胡桃；英伦方案可换墨绿背板',price:'¥12,000–22,000',tip:'约24延米层板 ≈ 600–700 册藏书，留两格给摆件；如需取高层书籍可加顶部轨道式梯'},
  ARMCHAIR:{name:'单人扶手椅 + 圆几',spec:'椅 62×60×85cm，几 Φ46cm H55cm',mat:'复古皮革或灯芯绒',price:'¥2,300–4,700',tip:'配一块 Φ1.44m 圆毯自成休闲角，下午阳光位'},
  FLOORLAMP:{name:'落地灯',spec:'H1.55m 亚麻鼓罩 Φ38cm',mat:'黄铜杆 · 亚麻布罩',price:'¥600–1,500',tip:'2700K；夜读主灯之一'},
  PENDANT:{name:'餐桌式吊灯',spec:'乳白玻璃球罩 Φ31cm，离桌面 75cm',mat:'黄铜配件',price:'¥400–900',tip:'居书桌正上方，避免眩光选磨砂罩'},
@@ -471,13 +470,6 @@ function buildShelf(){
   booksMesh.count=bi; booksMesh.instanceMatrix.needsUpdate=true;
   if(booksMesh.instanceColor) booksMesh.instanceColor.needsUpdate=true;
   tag(G,'SHELF'); tag(booksMesh,'SHELF');
-  // 图书馆梯
-  const lad=new THREE.Group(); const railM=SW.deskW;
-  for(const sx of [-0.185,0.185]){ const r=box(.045,2.3,.045,railM);
-    r.position.set(sx,1.15,0); lad.add(r);}
-  for(let i=0;i<7;i++){ const st=box(.4,.032,.055,railM); st.position.set(0,.24+i*.29,0); lad.add(st);}
-  lad.position.set(0.92,0,2.72); lad.rotation.z=-0.205; scene.add(lad);
-  tag(lad,'LADDER');
 }
 
 /* ================= 家具 ================= */
