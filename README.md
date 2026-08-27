@@ -2,7 +2,9 @@
 
 一间朝南带凸窗的 30㎡ 书房软装方案，可交互三维呈现：
 
-**在线打开**：`https://historyreview-code.github.io/shufang-design/`
+**在线打开**
+- GitHub Pages：<https://historyreview-code.github.io/shufang-design/>
+- Railway（备用线路）：<https://shufang-design-production.up.railway.app/>
 
 - 🖱️ 拖拽环视 · 滚轮缩放 · 右键平移
 - 💡 三档光线：白昼斜阳 / 暮色 / 灯夜
@@ -23,3 +25,7 @@ URL 参数（可组合）：`?view=desk|shelf|window|plan|overview` `time=day|du
 `style=A|B|C` `noui=1`（隐藏界面纯渲染） `autoclick=SHELF`（演示清单弹层）
 
 配套文档：`设计方案.md`（布局逻辑 / 软装清单 / 色彩材质 / 灯光 / 成本速估）
+
+## Railway 部署
+
+容器：`Dockerfile`（nginx:alpine 单文件伺服）。更新发布：`railway up -y`（在项目目录内）。
