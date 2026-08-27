@@ -293,7 +293,7 @@ function contactShadowTex(){
 function contactShadow(x,z,w,d,op=.5){
   const m=new THREE.Mesh(new THREE.PlaneGeometry(1,1),
     new THREE.MeshBasicMaterial({map:contactShadowTex(),transparent:true,opacity:op,depthWrite:false}));
-  m.rotation.x=-Math.PI/2; m.position.set(x,.0035+Math.random()*.0008,z);
+  m.rotation.x=-Math.PI/2; m.position.set(x,.0072,z);   // 统一高于地毯(y.004)/圆毯(.006)，杜绝随机高度闪面
   m.scale.set(w,d,1); m.renderOrder=2; scene.add(m); return m;
 }
 
@@ -376,14 +376,14 @@ ceil.material=SW.ceil; ceil.rotation.x=Math.PI/2; ceil.position.y=ROOM_H; scene.
 // 踢脚线
 function baseboard(len,pos,ry){ const b=box(len,.09,.014,SW.trim,false,false);
   b.position.set(...pos); b.rotation.y=ry; scene.add(b);}
-baseboard(1.3,[0.65,.045,0.009],0); baseboard(1.3,[4.35,.045,0.009],0);
-baseboard(ROOM_D,[ROOM_D-.007,.045,ROOM_D/2],Math.PI/2);
+baseboard(1.3,[0.65,.045,0.016],0); baseboard(1.3,[4.35,.045,0.016],0);
+baseboard(ROOM_D,[ROOM_D-.016,.045,ROOM_D/2],Math.PI/2);
 
 /* ================= 凸窗（南向飘窗 + 坐榻） ================= */
 {
   const bz=-0.62, bx0=1.28, bx1=3.72;
   // 座体
-  const seat=box(bx1-bx0,0.45,bz*-1,SW.baySeat); seat.position.set(2.5,0.225,bz/2); scene.add(seat);
+  const seat=box(bx1-bx0,0.45,0.66,SW.baySeat); seat.position.set(2.5,0.225,-0.342); scene.add(seat); // 前壁退离南墙12mm防深度冲突
   const top=box(bx1-bx0+.06,0.045,-bz+0.12,SW.deskW); top.position.set(2.5,0.4725,bz/2+0.03); scene.add(top);
   // 坐垫与抱枕
   const cush=rbox(bx1-bx0-.1,.13,-bz-0.02,.05,SW.cushion); cush.position.set(2.5,0.56,bz/2); cush.castShadow=false; scene.add(cush);
@@ -684,7 +684,7 @@ function leisureCorner(){
   fl.position.set(4.68,0,.38); scene.add(fl); window.__flamp=fl; tag(fl,'FLOORLAMP');
   // 圆形小毯
   const crug=new THREE.Mesh(new THREE.CircleGeometry(.72,36),SW.rugS);
-  crug.rotation.x=-Math.PI/2; crug.position.set(4.18,.006,.92); crug.receiveShadow=true; scene.add(crug);
+  crug.rotation.x=-Math.PI/2; crug.position.set(4.18,.0085,.92); crug.receiveShadow=true; scene.add(crug);
   tag(crug,'LOUNGERUG');
 }
 function cyl2(r,h,c,m){ return new THREE.Mesh(new THREE.CylinderGeometry(r,r*.92,h,12), m||mat0(c,{roughness:.7})); }
