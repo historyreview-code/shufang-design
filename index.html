@@ -60,6 +60,10 @@
   #popCard dd b{color:#8f3b2b}
   #popCard .tip{margin-top:7px;font-size:10.5px;color:#7a6a52;background:rgba(200,135,31,.12);
     border-left:2px solid #c8871f;padding:5px 8px;line-height:1.6}
+  .taglab{position:absolute;transform:translate(-50%,-50%);background:rgba(246,240,226,.95);
+    border:1.5px solid #c8402a;border-radius:12px;padding:3px 11px;font-family:"Songti SC","STSong",serif;
+    font-size:12px;font-weight:700;color:#3a2f24;letter-spacing:.06em;white-space:nowrap;
+    box-shadow:0 2px 10px rgba(15,10,4,.35)}
   .ping{position:fixed;z-index:18;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;
     border:2px solid #c8402a;pointer-events:none;animation:ping .7s ease-out forwards}
   @keyframes ping{from{transform:scale(.4);opacity:.95}to{transform:scale(1.6);opacity:0}}
@@ -906,33 +910,36 @@ document.getElementById('viewBar').addEventListener('click',e=>{
 let dimsOn=true;
 document.getElementById('dimBtn').addEventListener('click',()=>{
   dimsOn=!dimsOn; dimGroup.visible=dimsOn;
+  if(dimsOn) ensureDimDom();
+  if(dimWrap) dimWrap.style.display = (dimsOn?'block':'none');
   document.getElementById('dimBtn').textContent=dimsOn?'开 启':'隐 藏';
   document.getElementById('dimBtn').classList.toggle('on',dimsOn); });
 
-/* 尺寸标注线 */
+/* 尺寸标注线（WebGL红线）+ DOM 文字标签（project 到屏幕层，稳定清晰） */
 const dimGroup=new THREE.Group(); scene.add(dimGroup);
+const DIMS=[]; let dimWrap=null;
 function dimLine(a,b,label){
   const va=new THREE.Vector3(...a), vb=new THREE.Vector3(...b);
   const g=new THREE.BufferGeometry().setFromPoints([va,vb]);
   const l=new THREE.Line(g,new THREE.LineBasicMaterial({color:'#c8402a'})); dimGroup.add(l);
-  const md=new THREE.SpriteMaterial({ map:new THREE.CanvasTexture(textCanvas(label)), depthTest:false});
-  const sp=new THREE.Sprite(md); sp.scale.set(1.7,.45,1);
-  sp.position.copy(va).lerp(vb,.5).add(new THREE.Vector3(0,.05,0)); dimGroup.add(sp);
+  DIMS.push({m:va.clone().lerp(vb,.5), el:null, txt:label});
 }
-function textCanvas(t){ const c=document.createElement('canvas'); c.width=512;c.height=128;
-  const g=c.getContext('2d'); g.fillStyle='rgba(246,240,226,.96)';
-  g.beginPath(); g.roundRect(8,8,496,112,24); g.fill();
-  g.strokeStyle='#c8402a'; g.lineWidth=6; g.stroke();
-  g.fillStyle='#3a2f24'; g.font='700 62px "Songti SC",serif';
-  g.textAlign='center'; g.textBaseline='middle'; g.fillText(t,256,68);
-  const tx=new THREE.CanvasTexture(c); tx.colorSpace=THREE.SRGBColorSpace; return tx; }
+function ensureDimDom(){
+  if(dimWrap) return;
+  dimWrap=document.createElement('div');
+  dimWrap.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:8;display:none';
+  document.body.appendChild(dimWrap);
+  DIMS.forEach(d=>{
+    const el=document.createElement('div'); el.className='taglab'; el.textContent=d.txt;
+    d.el=el; dimWrap.appendChild(el); });
+}
 
 function buildDims(){
   const y=0.02, off=0.55;
   dimLine([off, y, -0.02],[ROOM_W-off,y,-0.02],'面宽 5.0m');
   dimLine([ROOM_W+0.04,y,off],[ROOM_W+0.04,y,ROOM_D-off],'进深 6.0m');
   dimLine([1.3,y,-0.72],[3.7,y,-0.72],'凸窗 2.4m');
-  dimLine([0.42,y,0.32],[0.42,y,5.7],'书架墙 5.4m×通高');
+  dimLine([0.42,y,0.32],[0.42,y,5.7],'书架墙 5.4m');
   dimLine([1.6,y,1.3],[3.4,y,2.15],'书桌 1.8m');
 }
 buildDims();
@@ -955,8 +962,8 @@ applyPalette('A');
 
 /* URL 参数直出（供截图QA） */
 const qs=new URLSearchParams(location.search);
-if(qs.get('noui')==='1'){ document.querySelectorAll('.card,#hint,#loading').forEach(el=>el.style.display='none'); }
-if(qs.get('time')){ applyMode(qs.get('time'));
+if(qs.get('noui')==='1'){ document.querySelectorAll('.card,#hint,#loading').forEach(el=>el.style.display='none');
+  dimsOn=false; dimGroup.visible=false; }if(qs.get('time')){ applyMode(qs.get('time'));
   document.querySelectorAll('#timeBtns .pill').forEach(x=>x.classList.toggle('on',x.dataset.t===qs.get('time'))); }
 if(qs.get('style')){ applyPalette(qs.get('style'));
   document.querySelectorAll('#styleBtns .pill').forEach(x=>x.classList.toggle('on',x.dataset.s===qs.get('style'))); }
@@ -1027,6 +1034,9 @@ if(qs.get('autoclick')){
     if(obj&&obj.userData.info) showPop(obj.userData.info, innerWidth*.64, innerHeight*.58, obj);
   }, 400);
 }
+/* DOM 尺寸标签初始化 */
+ensureDimDom();
+if(dimWrap) dimWrap.style.display=dimsOn?'block':'none';
 
 /* ================= 渲染循环 ================= */
 addEventListener('resize',()=>{ camera.aspect=innerWidth/innerHeight;
@@ -1062,6 +1072,13 @@ function loop(){
     camera.position.lerpVectors(tween.p0,tween.p1,e);
     controls.target.lerpVectors(tween.t0,tween.t1,e);
     if(tween.t>=1) tween=null; }
+  /* DOM 尺寸标签跟随投影 */
+  if(dimsOn&&dimWrap){
+    DIMS.forEach(d=>{ tmpV.copy(d.m).project(camera);
+      if(tmpV.z<-1||tmpV.z>1){ d.el.style.display='none'; return; }
+      d.el.style.display='block';
+      d.el.style.left=((tmpV.x*.5+.5)*innerWidth)+'px';
+      d.el.style.top =((-tmpV.y*.5+.5)*innerHeight)+'px'; }); }
   controls.update();
   renderer.render(scene,camera);
   if(firstFrame){ firstFrame=false;
