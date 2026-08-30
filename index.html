@@ -186,7 +186,7 @@ function mkPhys(c,o={}){ return new THREE.MeshPhysicalMaterial(Object.assign({co
 const SW = { wall:mkMat('#ece3d1'), trim:mkMat('#f2ecdd',{roughness:.9}),
   ceil:mkMat('#f4efe3'), floor:mkMat('#ffffff',{roughness:.72}),
   backP:mkMat('#5a3d23'),
-  deskW:mkMat('#8a5a33',{roughness:.6}), leather:mkMat('#96522b',{roughness:.5}),
+  deskW:mkPhys('#8a5a33',{roughness:.48,clearcoat:.18,clearcoatRoughness:.3}), leather:mkMat('#96522b',{roughness:.5}),
   cushion:mkMat('#caa06a',{roughness:.95}), throwM:mkMat('#b3562f',{roughness:.98}),
   rug:mkMat('#a34f2f',{roughness:.97}), rugS:mkMat('#e6dabd',{roughness:.97}),
   pil:[mkMat('#c8871f'),mkMat('#7d3b25'),mkMat('#31584a')],
@@ -194,16 +194,16 @@ const SW = { wall:mkMat('#ece3d1'), trim:mkMat('#f2ecdd',{roughness:.9}),
 SW.shelf = mkPhys('#6f4e2e',{roughness:.38,clearcoat:.22,clearcoatRoughness:.25});
 
 const PALETTES = {
- A:{wall:'#ece3d1',trim:'#f2ecdd',ceil:'#f4efe3',floor:'#9a6a42',
-    shelf:'#6f4e2e',backP:'#57391f',desk:'#8a5a33',leather:'#96522b',
+ A:{wall:'#ece3d1',trim:'#f2ecdd',ceil:'#f4efe3',floor:'#b08a5e',
+    shelf:'#6f4e2e',backP:'#57391f',desk:'#6a4120',leather:'#96522b',
     cushion:'#caa06a',throw:'#b3562f',rug:'#a34f2f',rugInk:'#efe3c8',
     pillows:['#c8871f','#7d3b25','#31584a'],baySeat:'#8a5f36',rugS:'#caa06a'},
- B:{wall:'#f2ead9',trim:'#faf5ea',ceil:'#f8f3e7',floor:'#c39a69',
-    shelf:'#b78857',backP:'#a17244',desk:'#b98a5c',leather:'#bb8250',
+ B:{wall:'#f2ead9',trim:'#faf5ea',ceil:'#f8f3e7',floor:'#d1b28c',
+    shelf:'#b78857',backP:'#a17244',desk:'#9c6f42',leather:'#bb8250',
     cushion:'#eee2cb',throw:'#d9b98c',rug:'#ded0b4',rugInk:'#a9784b',
     pillows:['#e5d3ae','#b98a5c','#93a687'],baySeat:'#bd9260',rugS:'#e2d2b0'},
- C:{wall:'#e6dfd0',trim:'#efe9da',ceil:'#f1ece0',floor:'#6f4e33',
-    shelf:'#503a28',backP:'#26483e',desk:'#5f4630',leather:'#2e5145',
+ C:{wall:'#e6dfd0',trim:'#efe9da',ceil:'#f1ece0',floor:'#9a7a55',
+    shelf:'#503a28',backP:'#26483e',desk:'#41301f',leather:'#2e5145',
     cushion:'#d8c9a8',throw:'#c9a136',rug:'#83362b',rugInk:'#caa96a',
     pillows:['#c9972c','#e8dcc4','#83362b'],baySeat:'#4e3826',rugS:'#b08a5e'} };
 
