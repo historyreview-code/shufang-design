@@ -114,6 +114,17 @@
   <button class="pill" data-v="window">凸窗榻</button>
   <div class="sep"></div>
   <button class="pill" data-v="plan">俯视平面</button>
+  <div class="sep"></div>
+  <button class="pill" id="coverBtn">封 面</button>
+</div>
+<div id="coverBox" style="display:none;position:fixed;inset:0;z-index:40;background:rgba(10,7,4,.9);
+  align-items:center;justify-content:center;flex-direction:column">
+  <img id="coverImg" alt="Cycles 封面" style="max-width:92vw;max-height:80vh;border-radius:12px;box-shadow:0 24px 90px rgba(0,0,0,.65)">
+  <div style="margin-top:14px;display:flex;gap:8px">
+    <button class="pill on" data-c="bright">明 亮</button>
+    <button class="pill" data-c="moody">夜 读</button>
+    <button class="pill" id="coverClose">关 闭</button>
+  </div>
 </div>
 <div id="hint">拖拽旋转 · 滚轮缩放 · 点击家具看清单</div>
 
@@ -1063,6 +1074,20 @@ if(qs.get('autoclick')){
     if(obj&&obj.userData.info) showPop(obj.userData.info, innerWidth*.64, innerHeight*.58, obj);
   }, 400);
 }
+/* 封面灯箱 */
+const coverBox=document.getElementById('coverBox'), coverImg=document.getElementById('coverImg');
+function openCover(){ coverImg.src='preview/cycles-cover.jpg?ts='+Date.now();
+  coverBox.style.display='flex'; }
+function closeCover(){ coverBox.style.display='none'; }
+document.getElementById('coverBtn').addEventListener('click',openCover);
+document.getElementById('coverClose').addEventListener('click',closeCover);
+addEventListener('keydown',e=>{ if(e.key==='Escape') closeCover(); });
+coverBox.addEventListener('click',e=>{
+  if(e.target.id==='coverBox'){ closeCover(); return; }
+  const b=e.target.closest('[data-c]'); if(!b) return;
+  coverBox.querySelectorAll('[data-c]').forEach(x=>x.classList.toggle('on',x===b));
+  coverImg.src='preview/cycles-cover-'+(b.dataset.c==='moody'?'moody.jpg':'jpg')+'?ts='+Date.now(); });
+
 /* DOM 尺寸标签初始化 */
 ensureDimDom();
 if(dimWrap) dimWrap.style.display=dimsOn?'block':'none';
