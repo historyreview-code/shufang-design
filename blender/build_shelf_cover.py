@@ -2,7 +2,7 @@ import bpy, math, os, random
 from math import radians as rad
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(BASE, "cover_shelf.png")
+OUT = os.path.join(BASE, "cover_shelf_bright.png")
 random.seed(11)
 
 bpy.ops.wm.read_factory_settings(use_empty=True)
@@ -169,11 +169,11 @@ for cx, cz, s in [(-.55, LVL[2], .9), (.95, LVL[3], .7)]:
 # ---------------- 灯光：夜读书房，一盏射灯洗墙 ----------------
 w = bpy.data.worlds.new("w"); scene.world = w; w.use_nodes = True
 wb = next(n for n in w.node_tree.nodes if n.type == 'BACKGROUND')
-wb.inputs["Color"].default_value = (.012, .011, .014, 1)
+wb.inputs["Color"].default_value = (.048, .044, .052, 1)
 wb.inputs["Strength"].default_value = 1
 
 sp = bpy.data.lights.new("wash", 'SPOT')
-sp.energy = 800; sp.color = (1, .78, .55)
+sp.energy = 1150; sp.color = (1, .78, .55)
 sp.spot_size = rad(34); sp.spot_blend = .3; sp.shadow_soft_size = .05
 spo = bpy.data.objects.new("wash", sp); spo.location = (0.1, -1.35, 2.92); link(spo)
 spo.rotation_euler = (rad(-30), 0, 0)                   # 斜洗书架中段
@@ -202,7 +202,7 @@ except Exception as e:
     print("GPU fallback:", e)
 scene.view_settings.view_transform = 'AgX'
 scene.view_settings.look = 'AgX - Punchy'
-scene.view_settings.exposure = .5
+scene.view_settings.exposure = 1.35
 scene.render.resolution_x = 2400; scene.render.resolution_y = 1500
 scene.render.filepath = OUT
 bpy.ops.render.render(write_still=True)
