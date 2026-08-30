@@ -4,8 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>临窗书房 · 5m×6m 软装方案效果图</title>
-<script>window.addEventListener('error',function(e){document.title='ERR: '+e.message});window.addEventListener('unhandledrejection',function(e){document.title='REJ: '+e.reason});</script>
-<script>,function(e){document.title='ERR: '+e.message+' @ '+(e.filename||'').split('/').pop()+':'+e.lineno});window.addEventListener('unhandledrejection',function(e){document.title='REJ: '+e.reason});</script>
+<script>window.addEventListener('error',function(e){document.title='ERR: '+e.message+' @ '+(e.filename||'').split('/').pop()+':'+e.lineno});window.addEventListener('unhandledrejection',function(e){document.title='REJ: '+e.reason});</script>
 <style>
   :root{
     --ink:#3a2f24; --cream:#f6f0e2; --line:rgba(58,47,36,.22);
@@ -157,7 +156,8 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 /* ================= 基础 ================= */
 const ROOM_W = 5.0, ROOM_D = 6.0, ROOM_H = 2.8;   // x: 西→东  z: 南→北
 const stage = document.getElementById('stage');
-const renderer = new THREE.WebGLRenderer({antialias:true});
+const renderer = new THREE.WebGLRenderer({antialias:true,
+  preserveDrawingBuffer:new URLSearchParams(location.search).get('keep')==='1'});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));
 renderer.setSize(innerWidth,innerHeight);
 renderer.shadowMap.enabled = true;
@@ -382,13 +382,14 @@ const W=(wid,pos,ry)=>{const p=plane(wid,ROOM_H,new THREE.MeshStandardMaterial({
 [[0.65,[0.65,ROOM_H/2,0],0],[4.35,[4.35,ROOM_H/2,0],0]].forEach(a=>W(a[0],a[1],a[2]));
 const sUp=plane(2.4,ROOM_H-2.35,SW.wall); sUp.position.set(2.5,(ROOM_H+2.35)/2,0); scene.add(sUp);
 const sLo=plane(2.4,0.45,SW.wall); sLo.position.set(2.5,0.225,0); scene.add(sLo);
-W(ROOM_D,[ROOM_D/2,ROOM_H/2,ROOM_D],Math.PI).position.set(ROOM_D/2,ROOM_H/2,ROOM_D); // 北墙
+const wN=W(ROOM_D,[ROOM_D/2,ROOM_H/2,ROOM_D],Math.PI); // 北墙
 const wE=W(ROOM_D,[0,0,0], -Math.PI/2); wE.position.set(ROOM_D,ROOM_H/2,ROOM_D/2); wE.rotation.y=-Math.PI/2; // 东
 const wW=plane(ROOM_D,ROOM_H,SW.wall); wW.position.set(0,ROOM_H/2,ROOM_D/2); wW.rotation.y=Math.PI/2;      // 西
 
 const flr=plane(ROOM_W,ROOM_D,SW.floor); flr.rotation.x=-Math.PI/2; scene.add(flr);
 const ceil=plane(ROOM_W,ROOM_D,new THREE.MeshStandardMaterial({map:null,color:'#f4efe3',roughness:.95}));
 ceil.material=SW.ceil; ceil.rotation.x=Math.PI/2; ceil.position.y=ROOM_H; scene.add(ceil);
+[flr,ceil,wN,wE,wW,sUp,sLo].forEach(o=>o.userData.ikey='SHELL');
 
 // 踢脚线
 function baseboard(len,pos,ry){ const b=box(len,.09,.014,SW.trim,false,false);
@@ -651,11 +652,11 @@ function desk(){
   const ch=new THREE.Group();
   const pipM=SW.leather.clone(); pipM.color.offsetHSL(0,.05,-.09);   // 深一号皮料
   const plasticM=mat0('#241d16',{roughness:.55});
-  const seat=rbox(.52,.13,.48,.05,SW.leather); seat.position.y=.47; ch.add(seat);
+  const seat=rbox(.52,.13,.48,.05,SW.leather); seat.name='seat'; seat.position.y=.47; ch.add(seat);
   const trayS=new THREE.Mesh(new THREE.CylinderGeometry(.235,.215,.026,20),plasticM);
-  trayS.position.y=.399; ch.add(trayS);                              // 座下底盘
+  trayS.name='trayS'; trayS.position.y=.399; ch.add(trayS);                              // 座下底盘
   const backB=rbox(.46,.54,.10,.06,SW.leather);
-  backB.position.set(0,.86,.205); backB.rotation.x=.09; ch.add(backB);        // 背板微后仰
+  backB.name='backB'; backB.position.set(0,.86,.205); backB.rotation.x=.09; ch.add(backB);        // 背板微后仰
   const lumbar=rbox(.32,.17,.06,.028,pipM);
   lumbar.position.set(0,.68,.135); lumbar.rotation.x=.18; ch.add(lumbar);     // 腰枕
   const neck=new THREE.Mesh(new THREE.CylinderGeometry(.022,.028,.24,10),plasticM);
@@ -665,16 +666,16 @@ function desk(){
     post.position.set(s[0],.575,-.02); ch.add(post);
     const armPad=rbox(.055,.032,.30,.013,pipM); armPad.position.set(s[0],.685,-.02); ch.add(armPad); });
   const colu=new THREE.Mesh(new THREE.CylinderGeometry(.024,.028,.33,12),brass());
-  colu.position.y=.225; ch.add(colu);                                // 气杆
+  colu.name='colu'; colu.position.y=.225; ch.add(colu);                                // 气杆
   const hub=new THREE.Mesh(new THREE.CylinderGeometry(.048,.054,.042,14),plasticM);
-  hub.position.y=.052; ch.add(hub);                                  // 五星轮毂
+  hub.name='hub'; hub.position.y=.052; ch.add(hub);                                  // 五星轮毂
   for(let i=0;i<5;i++){ const a=i/5*Math.PI*2;
     const leg=rbox(.31,.03,.058,.011,plasticM);
-    leg.rotation.y=Math.PI/2-a;                                      // 长轴对准径向
+    leg.name='leg'+i; leg.rotation.y=Math.PI/2-a;                                      // 长轴对准径向
     leg.position.set(Math.sin(a)*.105,.034,Math.cos(a)*.105); ch.add(leg);
     const wh=new THREE.Mesh(new THREE.CylinderGeometry(.027,.027,.02,12),mat0('#171208',{roughness:.4}));
     wh.rotation.z=Math.PI/2; wh.rotation.y=-a-Math.PI/2;
-    wh.position.set(Math.sin(a)*.245,.027,Math.cos(a)*.245); ch.add(wh); }
+    wh.name='wh'+i; wh.position.set(Math.sin(a)*.245,.027,Math.cos(a)*.245); ch.add(wh); }
   ch.traverse(o=>{if(o.isMesh)o.castShadow=true;});
   ch.position.set(2.5,0,2.62); ch.rotation.y=0; scene.add(ch); tag(ch,'CHAIR'); window.__progChair=ch;
 }
@@ -691,7 +692,7 @@ function leisureCorner(){
     arm.position.set(s[0],.53,.0); g.add(arm);
     const postF=cyl2(.026,.32,'#4a3826'); postF.position.set(s[0]+.06,.16,.24); g.add(postF);
     const postB=postF.clone(); postB.position.z=-.24; g.add(postB); });
-  [[-.27,.24],[.27,.24],[-.27,-.24],[.27,-.24]].forEach(l=>{ const lg=cyl2(.024,.36,'#4a3826');
+  [[-.27,.24],[.27,.24],[-.27,-.24],[.27,-.24]].forEach(l=>{ const lg=cyl2(.029,.36,'#5a4230');
     lg.position.set(l[0],.18,l[1]); g.add(lg); });
   g.traverse(o=>{if(o.isMesh)o.castShadow=true;});
   g.position.set(4.25,0,1.05); g.rotation.y=-2.15; scene.add(g); tag(g,'ARMCHAIR');
@@ -746,9 +747,13 @@ function greenery(){
   for(let i=0;i<3;i++){ const hk=new THREE.Mesh(new THREE.TorusGeometry(.03,.008,8,14,Math.PI),brass());
     hk.position.set(1.78+i*.22,1.62,5.985); hk.rotation.x=Math.PI/2; hk.rotation.z=Math.PI/2; scene.add(hk);}
   // 门(北墙偏东)
-  const dr=box(.88,2.06,.05,SW.trim,false,false); dr.position.set(4.42,1.03,5.985); scene.add(dr);
+  /* 门用单面片（朝房内）：box 六面可见，会从墙外挡住总览机位看向椅子下半身的视线 */
+  const dr=new THREE.Mesh(new THREE.PlaneGeometry(.88,2.06),SW.trim);
+  dr.rotation.y=Math.PI; dr.position.set(4.42,1.03,5.985); scene.add(dr);
   const knb=new THREE.Mesh(new THREE.SphereGeometry(.02,10,10),brass()); knb.position.set(4.12,1.05,5.955); scene.add(knb);
-  const dfr=box(1.0,2.12,.06,SW.trim,false,false); dfr.position.set(4.42,1.06,6.0); dfr.material=SW.wall; scene.add(dfr);
+  /* 门框同为单面片（原 box 会从墙外遮挡视线；z 错开 1cm 防与北墙 z-fighting） */
+  const dfr=new THREE.Mesh(new THREE.PlaneGeometry(1.0,2.12),SW.wall);
+  dfr.rotation.y=Math.PI; dfr.position.set(4.42,1.06,5.99); scene.add(dfr);
 }
 
 function credenza(){
@@ -997,17 +1002,21 @@ lightingFixtures();
 mainRug();
 applyPalette('A');
 /* Blender 高模转椅：加载成功替换程序化椅，失败自动降级 */
-window.__progChair=null;
 {
   const loader=new GLTFLoader();
+  if(new URLSearchParams(location.search).get('noglb')==='1'){ window.__noglb=true; }
+  if(!window.__noglb)
   loader.load('blender/chair.glb?v=20260830',(gltf)=>{
     const m=gltf.scene;
     m.traverse(o=>{ if(o.isMesh){ o.castShadow=true; o.receiveShadow=true; }});
     applyGLBPalette(m,PALETTES[curStyleKey]);
-    m.position.set(2.5,0,2.62); m.rotation.y=Math.PI;   // Blender -Y 朝前 → 场景内朝 -Z（书桌）
+    /* 模型原点在脚底以下16.5cm（GLB minY=-0.165），必须按包围盒抬高，否则五星脚整副沉入地板 */
+    const cbb=new THREE.Box3().setFromObject(m);
+    m.position.set(2.5,-cbb.min.y+.002,2.62); m.rotation.y=Math.PI;   // Blender -Y 朝前 → 场景内朝 -Z（书桌）
     scene.add(m); tag(m,'CHAIR'); window.__glbChair=m;
     if(window.__progChair){ scene.remove(window.__progChair); window.__progChair=null; }
     window.__ready2=true;
+
   },undefined,err=>console.warn('chair.glb 加载失败，保留程序化椅子'));
   /* 桌面摆件：陶土猴头 + 自由女神（Blender 手作资产） */
   const deskTopY=.7725;
@@ -1048,6 +1057,53 @@ if(qs.get('cam')){ const c=qs.get('cam').split(',').map(Number);
   const t=qs.get('tgt')? qs.get('tgt').split(',').map(Number) : [2.5,.7,2.5];
   controls.target.set(t[0],t[1],t[2]); controls.update(); }
 if(qs.get('nodim')==='1'){ dimsOn=false; dimGroup.visible=false; document.getElementById('dimBtn').classList.remove('on'); document.getElementById('dimBtn').textContent='隐 藏';}
+
+/* ?probe=1 运行时探针：包围盒 + 屏幕投影 + 画布像素采样（QA 专用，轮询等椅子加载） */
+if(qs.get('probe')==='1'){
+  const runProbe=()=>{
+    const out=[], fmt=b=>'['+[b.min.x,b.min.y,b.min.z].map(v=>v.toFixed(2))+' → '+[b.max.x,b.max.y,b.max.z].map(v=>v.toFixed(2))+']';
+    const bbOf=o=>new THREE.Box3().setFromObject(o);
+    out.push('cam='+camera.position.toArray().map(v=>v.toFixed(2))+' fov='+camera.fov+' wh='+innerWidth+'x'+innerHeight+' style='+curStyleKey);
+    out.push('glbChair='+!!window.__glbChair+' progChair='+!!window.__progChair);
+    const ch=window.__glbChair||window.__progChair;
+    if(ch) out.push('chairBB='+fmt(bbOf(ch)));
+    if(window.__desk) out.push('deskBB='+fmt(bbOf(window.__desk)));
+    let ac=null; scene.traverse(o=>{ if(!ac&&o.userData&&o.userData.ikey==='ARMCHAIR') ac=o; });
+    if(ac){ out.push('armBB='+fmt(bbOf(ac))+' vis='+ac.visible); }
+    const pts=[[2.5,.03,2.62,'wheel'],[2.5,.18,2.62,'gaslift'],[2.5,.45,2.62,'seat'],[2.5,1.05,2.62,'backtop'],[4.25,.18,1.05,'armLeg'],[4.25,.5,1.05,'armSeat']];
+    const scr={};
+    pts.forEach(p=>{ const v=new THREE.Vector3(p[0],p[1],p[2]).project(camera);
+      const px=Math.round((v.x*.5+.5)*innerWidth), py=Math.round((-v.y*.5+.5)*innerHeight);
+      scr[p[3]]=[px,py]; out.push('proj '+p[3]+' px='+px+','+py+' inView='+(v.z<1&&px>=0&&px<innerWidth&&py>=0&&py<innerHeight)); });
+    renderer.render(scene,camera);
+    const gl=renderer.getContext(), W=gl.drawingBufferWidth, H=gl.drawingBufferHeight;
+    Object.keys(scr).forEach(k=>{ const [px,py]=scr[k];
+      if(px<0||py<0) return;
+      const gx=Math.min(W-1,Math.round(px/innerWidth*W)), gy=Math.min(H-1,Math.round((1-py/innerHeight)*H));
+      const pix=new Uint8Array(4); gl.readPixels(gx,gy,1,1,gl.RGBA,gl.UNSIGNED_BYTE,pix);
+      out.push('rgb '+k+' @'+px+','+py+' = '+pix[0]+','+pix[1]+','+pix[2]); });
+    const ray=new THREE.Raycaster();
+    const what=(px,py,label)=>{ const v2=new THREE.Vector2(px/innerWidth*2-1,-(py/innerHeight)*2+1);
+      ray.setFromCamera(v2,camera); const hits=ray.intersectObjects(scene.children,true);
+      const seen=new Set(); const names=[];
+      hits.slice(0,8).forEach(h=>{ let o=h.object,nm=null;
+        while(o){ if(o.userData&&o.userData.ikey){nm=o.userData.ikey;break;} o=o.parent; }
+        const key=nm||h.object.name||h.object.type; if(!seen.has(key)){seen.add(key);names.push(key+'@'+h.point.x.toFixed(2)+','+h.point.y.toFixed(2)+','+h.point.z.toFixed(2));} });
+      out.push('ray '+label+' @'+px+','+py+' → '+(names.join(' | ')||'NOTHING')); };
+    what(scr.wheel[0],scr.wheel[1],'wheel_lvl'); what(scr.seat[0],scr.seat[1],'seat_lvl');
+    what(scr.armLeg[0],scr.armLeg[1],'armLeg_lvl'); what(320,460,'orange_blob');
+    out.push('camquat='+camera.quaternion.x.toFixed(3)+','+camera.quaternion.y.toFixed(3)+','+camera.quaternion.z.toFixed(3)+','+camera.quaternion.w.toFixed(3));
+    out.push('canvas='+renderer.domElement.width+'x'+renderer.domElement.height+' css='+renderer.domElement.style.width+'x'+renderer.domElement.style.height+' dpr='+(window.devicePixelRatio||1));
+    const pre=document.createElement('pre'); pre.id='probeOut';
+    pre.style.cssText='position:fixed;left:0;top:0;z-index:999;color:#3f6;font-size:14px;font-weight:700;background:rgba(0,0,0,.85);padding:4px;white-space:pre-wrap;max-width:60vw;margin:0';
+    pre.textContent=out.join('\n'); document.body.appendChild(pre);
+    Object.keys(scr).forEach(k=>{ const mk=document.createElement('div'); const px=scr[k][0], py=scr[k][1];
+      mk.style.cssText='position:fixed;left:'+(px-8)+'px;top:'+(py-8)+'px;width:16px;height:16px;border:3px solid #ff00e0;z-index:998;pointer-events:none';
+      mk.title=k; document.body.appendChild(mk); });
+  };
+  let ptries=0; const pwait=setInterval(()=>{ ptries++;
+    if(window.__glbChair||window.__progChair||ptries>50){ clearInterval(pwait); runProbe(); } },400);
+}
 
 /* ================= 点击家具 → 软装清单弹层 ================= */
 const raycaster=new THREE.Raycaster(), ptr=new THREE.Vector2();
@@ -1129,6 +1185,27 @@ if(new URLSearchParams(location.search).get('solo')==='chair'){
     scene.traverse(o=>{ if(!keep.has(o) && (o.isMesh||o.isLine||o.isSprite)) o.visible=false; });
     camera.position.set(-1.35,-1.55,.92); camera.lookAt(0,.55,.28);
   },900);
+}
+
+/* ?hide=rug,desk 二分调试：按标签隐藏对象，定位遮挡物 */
+{
+  const h=new URLSearchParams(location.search).get('hide');
+  if(h){ const want=new Set(h.split(',').map(s=>s.trim().toUpperCase()));
+    scene.traverse(o=>{ if(o.userData&&o.userData.ikey&&want.has(o.userData.ikey.toUpperCase())) o.visible=false; });
+    console.log('hide applied:',[...want].join(',')); }
+}
+
+/* ?only=chair 正向二分：只保留指定标签对象（其余 Mesh 全隐藏），定位遮挡物 */
+{
+  const h=new URLSearchParams(location.search).get('only');
+  if(h){ const want=new Set(h.split(',').map(s=>s.trim().toUpperCase()));
+    const roots=new Set();
+    scene.traverse(o=>{ if(o.userData&&o.userData.ikey&&want.has(o.userData.ikey.toUpperCase())) roots.add(o); });
+    scene.traverse(o=>{ if(o.isMesh||o.isLine||o.isSprite){
+      let p=o, keep=false;
+      while(p){ if(roots.has(p)){keep=true;break;} p=p.parent; }
+      if(!keep) o.visible=false; } });
+    console.log('only applied:',[...want].join(',')); }
 }
 
 /* DOM 尺寸标签初始化 */
