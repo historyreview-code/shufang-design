@@ -125,6 +125,5 @@ bpy.ops.render.render(write_still=True)
 bpy.ops.object.select_all(action='DESELECT')
 for ob in CHAIR.objects: ob.select_set(True)
 bpy.ops.export_scene.gltf(filepath=OUT_GLB, export_format='GLB', use_selection=True,
-    export_yup=True, export_draco_mesh_compression_enable=True,
-    export_draco_mesh_compression_level=6)
+    export_yup=True)   # 不用 Draco：省去 CDN WASM decoder 外部依赖
 print("EXPORTED", OUT_GLB, OUT_PNG, os.path.getsize(OUT_GLB))

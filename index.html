@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>临窗书房 · 5m×6m 软装方案效果图</title>
-<script>window.addEventListener('error',function(e){document.title='ERR: '+e.message+' @ '+(e.filename||'').split('/').pop()+':'+e.lineno});window.addEventListener('unhandledrejection',function(e){document.title='REJ: '+e.reason});</script>
+<script>window.addEventListener('error',function(e){document.title='ERR: '+e.message});window.addEventListener('unhandledrejection',function(e){document.title='REJ: '+e.reason});</script>
+<script>,function(e){document.title='ERR: '+e.message+' @ '+(e.filename||'').split('/').pop()+':'+e.lineno});window.addEventListener('unhandledrejection',function(e){document.title='REJ: '+e.reason});</script>
 <style>
   :root{
     --ink:#3a2f24; --cream:#f6f0e2; --line:rgba(58,47,36,.22);
@@ -152,7 +153,6 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 
 /* ================= 基础 ================= */
 const ROOM_W = 5.0, ROOM_D = 6.0, ROOM_H = 2.8;   // x: 西→东  z: 南→北
@@ -997,9 +997,6 @@ applyPalette('A');
 window.__progChair=null;
 {
   const loader=new GLTFLoader();
-  const draco=new DRACOLoader();
-  draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');
-  loader.setDRACOLoader(draco);
   loader.load('blender/chair.glb',(gltf)=>{
     const m=gltf.scene;
     m.traverse(o=>{ if(o.isMesh){ o.castShadow=true; o.receiveShadow=true; }});
@@ -1017,6 +1014,14 @@ window.__progChair=null;
     root.position.set(2.5+x, deskTopY-bb.min.y+.0015, 1.72+z);
     root.rotation.y=ry;
     scene.add(root); tag(root,'DESKDECOR');
+  }
+  if(new URLSearchParams(location.search).get('debug')==='1'){
+    setTimeout(()=>{ const c=window.__glbChair;
+      if(!c){document.title='DBG: no glb chair';return;}
+      const bb=new THREE.Box3().setFromObject(c);
+      let meshes=0; c.traverse(o=>{if(o.isMesh)meshes++;});
+      document.title='DBG meshes='+meshes+' minY='+bb.min.y.toFixed(3)+' maxY='+bb.max.y.toFixed(3)+' posY='+c.position.y.toFixed(3);
+    },1500);
   }
   loader.load('blender/decor_monkey.glb',  g=>placeDecor(g.scene, .28, -.27, .5));
   loader.load('blender/decor_liberty.glb', g=>placeDecor(g.scene, .63, -.30, .28));
