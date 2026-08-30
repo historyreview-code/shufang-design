@@ -621,16 +621,16 @@ function desk(){
       kn.position.set(px[0]+(i? .0 :.0),.12+i*.31, i?-0.3:0.3);
       kn.position.z=i? .0 : .0; g.add(kn);} });
   // 桌面物件
-  const lap=box(.33,.012,.24,mkMat('#b9bec4',{metalness:.6,roughness:.4})); lap.position.set(.42,.765,.05); lap.rotation.y=-.3; g.add(lap);
-  const cup=new THREE.Mesh(new THREE.CylinderGeometry(.04,.033,.09,14),mkMat('#e6dcc8',{roughness:.5})); cup.position.set(-.15,.8,.18); g.add(cup);
-  let hy=.772; for(let i=0;i<3;i++){const bk=box(.24,.032,.17,mkMat(['#8f3b2b','#37584a','#c9993f'][i]));
+  const lap=box(.33,.012,.24,mkMat('#b9bec4',{metalness:.6,roughness:.4})); lap.position.set(.42,.779,.05); lap.rotation.y=-.3; g.add(lap);
+  const cup=new THREE.Mesh(new THREE.CylinderGeometry(.04,.033,.09,14),mkMat('#e6dcc8',{roughness:.5})); cup.position.set(-.15,.809,.18); g.add(cup);
+  let hy=.7755; for(let i=0;i<3;i++){const bk=box(.24,.032,.17,mkMat(['#8f3b2b','#37584a','#c9993f'][i]));
     bk.position.set(-.45,hy+.016,-.18+i*.012); bk.rotation.y=rnd(-.1,.1); hy+=.032; g.add(bk);}
-  const pen=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,.11,12),mkMat('#7d6a52')); pen.position.set(.05,.83,.2); g.add(pen);
+  const pen=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,.11,12),mkMat('#7d6a52')); pen.position.set(.05,.832,.2); g.add(pen);
   // 信纸两枚 + 蘸水笔（生活气息）
   const paperM=mkMat('#f6f2e6',{roughness:.9});
   const pp1=new THREE.Mesh(new THREE.PlaneGeometry(.21,.30),paperM);
-  pp1.rotation.x=-Math.PI/2; pp1.rotation.z=.29; pp1.position.set(.62,.7738,.28); g.add(pp1);
-  const pp2=pp1.clone(); pp2.rotation.z=.36; pp2.position.set(.64,.7745,.27); g.add(pp2);
+  pp1.rotation.x=-Math.PI/2; pp1.rotation.z=.29; pp1.position.set(.62,.7755,.28); g.add(pp1);
+  const pp2=pp1.clone(); pp2.rotation.z=.36; pp2.position.set(.64,.7771,.27); g.add(pp2);
   const penBody=new THREE.Mesh(new THREE.CylinderGeometry(.005,.004,.15,10),brass());
   penBody.rotation.z=Math.PI/2-.5; penBody.position.set(.60,.78,.20); g.add(penBody);
   // 绿罩银行家台灯
@@ -644,7 +644,7 @@ function desk(){
   const bulb=new THREE.Mesh(new THREE.SphereGeometry(.035,10,10),new THREE.MeshStandardMaterial({color:'#ffedc0',emissive:'#ffca6e',emissiveIntensity:.9}));
   bulb.position.y=.275; lampG.add(bulb);
   lampG.traverse(o=>o.castShadow=true);
-  lampG.position.set(-.75,.75+.022,-.15); lampG.name='banker'; g.add(lampG);
+  lampG.position.set(-.75,.7745,-.15); lampG.name='banker'; g.add(lampG);
   g.position.set(2.5,0,1.72);
   scene.add(g); window.__desk=g; tag(g,'DESK'); tag(lampG,'BANKER');
   // 转椅（圆润背板+腰枕+底盘气杆+真·五星脚）
@@ -921,7 +921,7 @@ function applyPalette(key){
 /* ================= 视角预设 ================= */
 const VIEWS={
  overview:{p:[6.0,3.0,7.6],t:[2.45,1.05,1.9]},
- desk:{p:[2.7,1.5,3.3],t:[2.45,0.82,1.5]},
+ desk:{p:[2.72,2.02,3.72],t:[2.45,0.78,1.45]},
  shelf:{p:[3.6,1.5,3.0],t:[0.35,1.3,3.0]},
  window:{p:[2.5,1.35,2.9],t:[2.5,0.75,-0.4]},
  plan:{p:[2.5,9.6,3.05],t:[2.5,0,2.98]} };
@@ -1014,7 +1014,7 @@ window.__progChair=null;
   function placeDecor(root,x,z,ry){
     root.traverse(o=>{ if(o.isMesh){ o.castShadow=true; o.receiveShadow=true; }});
     const bb=new THREE.Box3().setFromObject(root);
-    root.position.set(2.5+x, deskTopY-bb.min.y, 1.72+z);
+    root.position.set(2.5+x, deskTopY-bb.min.y+.0015, 1.72+z);
     root.rotation.y=ry;
     scene.add(root); tag(root,'DESKDECOR');
   }
