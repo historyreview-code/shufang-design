@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>临窗书房 · 5m×6m 软装方案效果图</title>
+<script>window.addEventListener('error',function(e){document.title='ERR: '+e.message+' @ '+(e.filename||'').split('/').pop()+':'+e.lineno});window.addEventListener('unhandledrejection',function(e){document.title='REJ: '+e.reason});</script>
 <style>
   :root{
     --ink:#3a2f24; --cream:#f6f0e2; --line:rgba(58,47,36,.22);
@@ -181,14 +182,16 @@ controls.minDistance = 0.9; controls.maxDistance = 13;
 /* ================= 调色板（三套风格） ================= */
 function mkMat(c,o={}){ return new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.86},o)); }
 
+function mkPhys(c,o={}){ return new THREE.MeshPhysicalMaterial(Object.assign({color:c,roughness:.86},o)); }
 const SW = { wall:mkMat('#ece3d1'), trim:mkMat('#f2ecdd',{roughness:.9}),
   ceil:mkMat('#f4efe3'), floor:mkMat('#ffffff',{roughness:.72}),
-  shelf:mkMat('#6f4e2e',{roughness:.66}), backP:mkMat('#5a3d23'),
+  backP:mkMat('#5a3d23'),
   deskW:mkMat('#8a5a33',{roughness:.6}), leather:mkMat('#96522b',{roughness:.5}),
   cushion:mkMat('#caa06a',{roughness:.95}), throwM:mkMat('#b3562f',{roughness:.98}),
   rug:mkMat('#a34f2f',{roughness:.97}), rugS:mkMat('#e6dabd',{roughness:.97}),
   pil:[mkMat('#c8871f'),mkMat('#7d3b25'),mkMat('#31584a')],
   baySeat:mkMat('#8a5f36',{roughness:.7}), frame:mkMat('#efe8d8') };
+SW.shelf = mkPhys('#6f4e2e',{roughness:.38,clearcoat:.22,clearcoatRoughness:.25});
 
 const PALETTES = {
  A:{wall:'#ece3d1',trim:'#f2ecdd',ceil:'#f4efe3',floor:'#9a6a42',
@@ -498,7 +501,12 @@ function buildShelf(){
   [[D,Htop,Z1-Z0+sideT*2,Xc,Htop/2,Z0-sideT/2,true],
   ].forEach(()=>{});
   const add=(w,h,d,x,y,z,m=MAT)=>{const b=box(w,h,d,m); b.position.set(x,y,z); G.add(b); return b;};
-  add(D,plinth+.05,Z1-Z0+sideT*2, Xc,(plinth)/2-0.0, (Z0+Z1)/2);            // 底柜体
+  add(D,.295,Z1-Z0+sideT*2, Xc,.2825, (Z0+Z1)/2);                          // 底柜体
+  add(D+.09,.085,Z1-Z0+.10, Xc+.02,.0425,(Z0+Z1)/2);                       // 基座叠涩·一层
+  add(D+.18,.05,Z1-Z0+.18, Xc+.04,.11,(Z0+Z1)/2);                          // 基座叠涩·二层
+  add(D+.09,.06,Z1-Z0+.10, Xc-.025,Htop+.03,(Z0+Z1)/2);                      // 顶冠·一层
+  add(D+.18,.045,Z1-Z0+.18, Xc+.04,Htop+.082,(Z0+Z1)/2);                     // 顶冠·二层
+  add(D+.24,.035,Z1-Z0+.24, Xc+.06,Htop+.122,(Z0+Z1)/2);                     // 顶冠·三层
   add(D,.07,Z1-Z0+sideT*2, Xc,plinth+.035,(Z0+Z1)/2);                        // 台面收口
   add(D,.06,Z1-Z0+sideT*2, Xc,Htop+.03,(Z0+Z1)/2);                           // 顶收口
   add(D,Htop,sideT, Xc,Htop/2,Z0-sideT/2);                                   // 南端板
@@ -508,23 +516,29 @@ function buildShelf(){
   const bp=plane(Z1-Z0+.1,Htop-.02,SW.backP); bp.rotation.y=Math.PI/2;
   bp.position.set(0.052,Htop/2-0.01,(Z0+Z1)/2); G.add(bp);
   // 底柜门板装饰线
-  for(let i=0;i<8;i++){ const zc=Z0+ (i+0.5)*(Z1-Z0)/8;
+  for(let i=0;i<6;i++){ const zc=Z0+ (i+0.5)*(Z1-Z0)/6;
     add(.012,plinth-.14,(Z1-Z0)/8-.09, D+.002,(plinth)/2,zc, SW.trim).castShadow=false;
     const knob=new THREE.Mesh(new THREE.SphereGeometry(.014,8,8),mkMat('#c8a052',{metalness:.9,roughness:.35}));
-    knob.position.set(D+.02,plinth/2, zc+(Z1-Z0)/8-.09); G.add(knob); }
+    knob.position.set(D+.02,plinth/2, zc+(Z1-Z0)/6-.09); G.add(knob); }
   // 层板 y & 竖隔板
   const LV=[0.82,1.19,1.56,1.93,2.30];
-  const NBAY=8, bw=(Z1-Z0-NBAY*0.03)/NBAY;
-  LV.forEach(y=>add(D,.03,Z1-Z0, Xc,y,(Z0+Z1)/2));
-  for(let i=0;i<=NBAY;i++) add(D,Htop-plinth-.05,0.03, Xc,plinth+(Htop-plinth-.05)/2, Z0+i*(bw+0.03));
+  const NBAY=6, bw=(Z1-Z0-NBAY*0.03)/NBAY;
+  LV.forEach(y=>{ add(D,.03,Z1-Z0, Xc,y,(Z0+Z1)/2);
+    add(.026,.016,Z1-Z0-.02, D+.010, y+.023, (Z0+Z1)/2).castShadow=false; });
+  for(let i=1;i<NBAY;i++) add(D,Htop-plinth-.05,0.03, Xc,plinth+(Htop-plinth-.05)/2, Z0+i*(bw+0.035));
+  for(let i=1;i<NBAY;i++){ const zi=Z0+i*(bw+0.035);
+    add(.026,.06,.09, D+.014, LV[3]+.10, zi).castShadow=false;   // 柱头
+    add(.026,.05,.09, D+.014, LV[0]+.05, zi).castShadow=false; } // 柱脚
   // —— 放书 ——
   const PAL=['#8f3b2b','#b3652f','#c9993f','#37584a','#2f4858','#59422c','#e8dcc4','#7b2d26','#96742f','#e0cba8','#a34f2f','#31584a','#d19c3f','#48586e','#6d3530'];
   const JUMP=['#d8a02e','#efe0c2','#4a6fa5','#c05a30','#5a7d54','#7d2f3a'];
   const rowsBottom=[plinth+.065]; LV.forEach(y=>rowsBottom.push(y+.015));
+  const GZ=[]; for(let i=0;i<NBAY;i++){ const g0=Z0+.045+i*(bw+0.035)+.02;
+    GZ.push([g0, g0+bw-.04]); }
   const rowOpenH=[LV[0]-plinth-.03]; for(let i=0;i<LV.length;i++)
     rowOpenH.push((i<LV.length-1?LV[i+1]:Htop)-LV[i]-.03);
   for(let bIdx=0;bIdx<NBAY;bIdx++){
-    const zL=Z0+bIdx*(bw+0.03)+0.03, zR=zL+bw-0.03;
+    const zL=GZ[bIdx][0], zR=GZ[bIdx][1];
     for(let L=0;L<6;L++){
       const yBot=rowsBottom[L], maxH=rowOpenH[L]*0.92;
       let cursor=zL;
@@ -871,7 +885,7 @@ const MODES={
        pend:9, flamp:6.5, banker:4.5, shelfF:5.5, globeEm:.75, trackEm:.5, bayGlow:2,
        exposure:1.06, sunPos:[-5.6,1.7,-8.6] },
  night:{bg:'night',sun:.06, sunColor:'#9db4ff', hemi:.16, amb:.13, env:.13,
-       pend:11, flamp:7, banker:6, shelfF:5.5, globeEm:1.4, trackEm:1.0, bayGlow:2.5,
+       pend:13, flamp:7, banker:8.5, shelfF:5.5, globeEm:1.4, trackEm:1.0, bayGlow:2.5,
        exposure:1.08, sunPos:[-5.2,6.5,-4.5] }};
 const cur={sun:3.4,hemi:.62,amb:.12,pend:0,flamp:0,banker:0,shelfF:0,globeEm:0,trackEm:0,bayGlow:0,env:1};
 let lastEnv=-1;
