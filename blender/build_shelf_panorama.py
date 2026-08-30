@@ -2,8 +2,8 @@ import bpy, math, os, random
 from math import radians as rad
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(BASE, "cover_shelf_day.png")
-random.seed(11)
+OUT = os.path.join(BASE, "cover_shelf_pano.png")
+random.seed(21)
 
 bpy.ops.wm.read_factory_settings(use_empty=True)
 scene = bpy.context.scene
@@ -157,7 +157,7 @@ for li in range(len(LVL)):
             ob.location = (cursor + t/2, YW - .028, z0 + .014 + h/2)
             ob.rotation_euler = (0, 0, random.uniform(-.03, .03))
             ob.data.materials.append(bm); link(ob)
-            cursor += t + (random.uniform(.01, .07) if random.random() < .3 else .004)
+            cursor += t + (random.uniform(.01, .06) if random.random() < .26 else .004)
 
 # 陶瓷罐点缀（中段两层）
 for cx, cz, s in [(-.55, LVL[2], .9), (.95, LVL[3], .7)]:
@@ -166,15 +166,17 @@ for cx, cz, s in [(-.55, LVL[2], .9), (.95, LVL[3], .7)]:
     v.scale = (1, 1, 1.35); v.location = (cx, YW-.05, cz+.014+.095*s*1.2)
     v.data.materials.append(M_VASE); link(v)
 
-# ---------------- 灯光：夜读书房，一盏射灯洗墙 ----------------
+cube("topbooks", .34, .19, .05, (SX0+.55, YW-.03, ZT+.025), M_SHELF, .004)
+for o in [o for o in bpy.data.objects if o.name.startswith("vase_")]: pass
+# ---------------- 灯光：日光书房，柔和洗墙 ----------------
 w = bpy.data.worlds.new("w"); scene.world = w; w.use_nodes = True
 wb = next(n for n in w.node_tree.nodes if n.type == 'BACKGROUND')
 wb.inputs["Color"].default_value = (.55, .62, .72, 1)
 wb.inputs["Strength"].default_value = 1
 
 sp = bpy.data.lights.new("wash", 'SPOT')
-sp.energy = 320; sp.color = (1, .96, .90)
-sp.spot_size = rad(34); sp.spot_blend = .3; sp.shadow_soft_size = .05
+sp.energy = 260; sp.color = (1, .96, .90)
+sp.spot_size = rad(52); sp.spot_blend = .55; sp.shadow_soft_size = .09
 spo = bpy.data.objects.new("wash", sp); spo.location = (0.1, -1.35, 2.92); link(spo)
 spo.rotation_euler = (rad(-30), 0, 0)                   # 斜洗书架中段
 
@@ -182,15 +184,14 @@ sun = bpy.data.lights.new("rim", 'SUN'); sun.energy = 4.0; sun.color = (1, .97, 
 rim = bpy.data.objects.new("rim", sun); rim.rotation_euler = (rad(-35), rad(18), rad(155)); link(rim)
 
 # ---------------- 相机：50mm 长焦浅景深特写 ----------------
-cd = bpy.data.cameras.new("cam"); cd.lens = 50
-cd.dof.use_dof = True; cd.dof.aperture_fstop = 2.5; cd.dof.focus_distance = 1.75
-cam = bpy.data.objects.new("cam", cd); cam.location = (-0.40, -1.18, 1.30); link(cam)
-cam.rotation_euler = (rad(87), 0, rad(-14))
+cd = bpy.data.cameras.new("cam"); cd.lens = 30
+cam = bpy.data.objects.new("cam", cd); cam.location = (0.38, -3.35, 1.28); link(cam)
+cam.rotation_euler = (rad(90), 0, rad(-4.5))
 scene.camera = cam
 
 # ---------------- Cycles ----------------
 scene.render.engine = 'CYCLES'
-scene.cycles.samples = 320
+scene.cycles.samples = 288
 scene.cycles.use_denoising = True
 scene.cycles.max_bounces = 8
 try:
@@ -203,7 +204,7 @@ except Exception as e:
 scene.view_settings.view_transform = 'AgX'
 scene.view_settings.look = 'AgX - Base Contrast'
 scene.view_settings.exposure = .3
-scene.render.resolution_x = 2400; scene.render.resolution_y = 1500
+scene.render.resolution_x = 2880; scene.render.resolution_y = 1800
 scene.render.filepath = OUT
 bpy.ops.render.render(write_still=True)
 print("SHELF_COVER_DONE", OUT)
