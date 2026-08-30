@@ -14,7 +14,7 @@ bpy.ops.import_scene.gltf(filepath=os.path.join(BASE, "chair.glb"))
 new = [o for o in bpy.data.objects if o not in before]
 roots = [o for o in new if o.parent is None or o.parent not in new]
 for r in roots:
-    r.rotation_euler = (0, 0, rad(-28))          # 3/4 前侧展示角
+    r.rotation_euler = (0, 0, rad(-48))          # 3/4 前侧展示角
 
 # 地面：深色微抛光，出倒影
 fm = bpy.data.materials.new("floor"); fm.use_nodes = True
@@ -42,10 +42,10 @@ wb.inputs["Strength"].default_value = 1
 
 # 相机：低机位 3/4 前侧，f/3.5 焦点椅背
 cd = bpy.data.cameras.new("cam"); cd.lens = 46
-cd.dof.use_dof = True; cd.dof.aperture_fstop = 3.5; cd.dof.focus_distance = 1.95
-cam = bpy.data.objects.new("cam", cd); cam.location = (-1.30, -1.72, 0.92)
+cd.dof.use_dof = True; cd.dof.aperture_fstop = 3.5; cd.dof.focus_distance = 2.05
+cam = bpy.data.objects.new("cam", cd); cam.location = (-1.52, -1.52, 0.88)
 scene.collection.objects.link(cam)
-cam.rotation_euler = (rad(80), 0, rad(-37))
+cam.rotation_euler = (rad(80), 0, rad(-45))
 scene.camera = cam
 
 scene.render.engine = 'CYCLES'

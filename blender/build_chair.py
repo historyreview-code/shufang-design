@@ -63,14 +63,14 @@ def arc_shell(name, R, ang_deg, height, y_arc_center, z_center, thickness, m):
     ob.data.materials.append(m); return ob
 
 # ---------- 建模（Blender Z-up，椅子面朝 -Y，背板在 +Y） ----------
-rounded_box("seat_cushion", .52, .48, .13, .045, (0, 0, .47), M_LEATHER)
-cyl("seat_tray", .235, .215, .026, (0, 0, .399), M_PLASTIC)
-arc_shell("back_shell", .62, 92, .54, .75, .86, .06, M_LEATHER)
-rounded_box("lumbar", .32, .06, .17, .025, (0, .135, .68), M_PIP)
-neck = cyl("neck", .022, .028, .26, (0, .205, .51), M_PLASTIC); neck.rotation_euler = (rad(-10), 0, 0)
+rounded_box("seat_cushion", .58, .54, .16, .06, (0, 0, .47), M_LEATHER)
+cyl("seat_tray", .265, .245, .026, (0, 0, .394), M_PLASTIC)
+arc_shell("back_shell", 1.2, 25, .56, 1.36, .88, .07, M_LEATHER)
+rounded_box("lumbar", .36, .065, .18, .028, (0, .155, .70), M_PIP)
+neck = cyl("neck", .022, .028, .27, (0, .19, .50), M_PLASTIC); neck.rotation_euler = (rad(-8), 0, 0)
 for sx in (-1, 1):
-    cyl(f"arm_post_{'L' if sx<0 else 'R'}", .016, .019, .20, (sx*.27, -.02, .575), M_PLASTIC)
-    rounded_box(f"arm_pad_{'L' if sx<0 else 'R'}", .055, .30, .032, .013, (sx*.27, -.02, .685), M_PIP)
+    cyl(f"arm_post_{'L' if sx<0 else 'R'}", .016, .019, .20, (sx*.285, -.02, .575), M_PLASTIC)
+    rounded_box(f"arm_pad_{'L' if sx<0 else 'R'}", .055, .30, .032, .013, (sx*.285, -.02, .685), M_PIP)
 cyl("gaslift", .024, .028, .33, (0, 0, .225), M_BRASS)
 cyl("hub", .048, .054, .042, (0, 0, .052), M_PLASTIC)
 for i in range(5):
